@@ -1,6 +1,6 @@
 # dotnet-core-learning
 
-1.	What is Kestrel ?
+1.	What is Kestrel?
 
 2.	How to decouple .Net Core with IIS ?
 
