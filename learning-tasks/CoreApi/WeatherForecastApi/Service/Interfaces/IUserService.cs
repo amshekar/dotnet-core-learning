@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
+using WeatherForecastApi.Service.Models;
 
-namespace WeatherForecastApi.Service
+namespace WeatherForecastApi.Service.Interfaces
 {
     public interface IUserService
     {

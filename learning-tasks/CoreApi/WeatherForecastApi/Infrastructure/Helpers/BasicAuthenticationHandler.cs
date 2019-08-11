@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using WeatherForecastApi.Service;
+using WeatherForecastApi.Service.Interfaces;
 
 namespace WeatherForecastApi.Helpers
 {

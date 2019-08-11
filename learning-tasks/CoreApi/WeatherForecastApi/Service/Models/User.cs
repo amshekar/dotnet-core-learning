@@ -1,4 +1,4 @@
-﻿namespace WeatherForecastApi.Service
+﻿namespace WeatherForecastApi.Service.Models
 {
     public class User
     {
