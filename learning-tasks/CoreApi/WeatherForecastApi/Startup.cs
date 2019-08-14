@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -13,7 +14,10 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using WeatherForecastApi.Helpers;
 using WeatherForecastApi.Infrastructure.Middleware;
+using WeatherForecastApi.Service;
+using WeatherForecastApi.Service.Interfaces;
 
 namespace WeatherForecastApi
 {
@@ -37,9 +41,15 @@ namespace WeatherForecastApi
                         .AddFilter("NToastNotify", LogLevel.Warning)
                         .AddConsole();
                     });
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication",null);
+            // configure DI for application services
+            services.AddScoped<IUserService, UserService>();
             services.AddSwaggerGen(c=>
             {
                 c.SwaggerDoc("v1",new OpenApiInfo {Title="EPAMWeekOneAPI",Version="v1" });
+                //c.AddSecurityDefinition("basic", new BasicAuthScheme { Type = "basic" });
+                //c.DocumentFilter<BasicAuthFilter>();
             });
         }
 
@@ -58,6 +68,11 @@ namespace WeatherForecastApi
             loggerFactory.AddLog4Net();
             app.UseStaticFilesMiddleWare();
             app.UseDefaultFiles();
+            app.FolderProtection(new ProtectFolderOptions
+            {
+                Path = "/Secret",
+                PolicyName = "Authenticated"
+            });
             app.UseStaticFiles();
 
             app.UseSession();
@@ -81,6 +96,7 @@ namespace WeatherForecastApi
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "EPAM WEEK One API");
                 c.RoutePrefix = string.Empty;
             });
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
