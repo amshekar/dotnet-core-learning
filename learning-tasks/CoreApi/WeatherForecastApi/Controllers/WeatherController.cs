@@ -18,6 +18,7 @@ namespace WeatherForecastApi.Controllers
         private readonly ISessionManagement _sessionManagement;
         private readonly ILogger<WeatherController> _logger;
         private IUserService _userService;
+         
         public WeatherController(ISessionManagement sessionManagement,ILogger<WeatherController> logger)
         {
             _logger = logger;

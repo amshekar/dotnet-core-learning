@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using WeatherForecastApi.Helpers;
+using WeatherForecastApi.Infrastructure.Helpers;
 using WeatherForecastApi.Infrastructure.Middleware;
 using WeatherForecastApi.Service;
 using WeatherForecastApi.Service.Interfaces;
@@ -34,6 +36,17 @@ namespace WeatherForecastApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMemoryCache();
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
+                options.Providers.Add<ExternalCompressionProvider>();
+                options.MimeTypes =
+                    ResponseCompressionDefaults.MimeTypes.Concat(
+                        new[] { "image/svg+xml" });
+
+            });
             services.AddLogging(
                 builder=> {
                     builder.AddFilter("Microsoft", LogLevel.Warning)
@@ -68,6 +81,7 @@ namespace WeatherForecastApi
             loggerFactory.AddLog4Net();
             app.UseStaticFilesMiddleWare();
             app.UseDefaultFiles();
+            app.UseResponseCompression();
             app.FolderProtection(new ProtectFolderOptions
             {
                 Path = "/Secret",
