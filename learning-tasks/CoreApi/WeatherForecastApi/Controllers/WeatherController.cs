@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using WeatherForecastApi.Service.Interfaces;
 
 namespace WeatherForecastApi.Controllers
 {
@@ -12,6 +15,15 @@ namespace WeatherForecastApi.Controllers
     [ApiController]
     public class WeatherController : ControllerBase
     {
+        private readonly ISessionManagement _sessionManagement;
+        private readonly ILogger<WeatherController> _logger;
+        private IUserService _userService;
+         
+        public WeatherController(ISessionManagement sessionManagement,ILogger<WeatherController> logger)
+        {
+            _logger = logger;
+            _sessionManagement = sessionManagement;
+        }
         // GET: api/Weather
         [HttpGet]
         public IEnumerable<string> Get()
